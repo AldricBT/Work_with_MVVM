@@ -1,4 +1,5 @@
-﻿using MVVM_test2.Models;
+﻿using MVVM_test2.Infrastructure.Commands;
+using MVVM_test2.Models;
 using MVVM_test2.ViewModels.Base;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Xml.Serialization;
@@ -44,12 +46,64 @@ namespace MVVM_test2.ViewModels
         #endregion
 
         private int _addNumber;
-        private int _number2;
-        private int _number3;
-
-        private ICommand _commandAdd;
+        private int _summa;
+        private int _selectedIndex;
 
         private Model _model = new Model();
+
+
+
+        #region Commands
+
+        #region CloseApplicationCommand
+
+        public ICommand CloseApplicationCommand { get; } //здесь живет сама команда (это по сути обычное свойство, чтобы его можно было вызвать из хамл)
+
+        private void OnCloseApplicationCommandExecuted(object p) //логика команды
+        {
+            Application.Current.Shutdown();
+        }
+
+        private bool CanCloseApplicationCommandExecute(object p) => true; //если команда должна быть доступна всегда, то просто возвращаем true
+
+        #endregion
+
+        #region AddCommand
+
+        public ICommand AddCommand { get; } //здесь живет сама команда (это по сути обычное свойство, чтобы его можно было вызвать из хамл)
+
+        private void OnAddCommandExecuted(object p) //логика команды
+        {
+            Add(_addNumber);
+        }
+
+        private bool CanAddCommandExecute(object p) => true; //если команда должна быть доступна всегда, то просто возвращаем true
+
+        #endregion
+
+        #region RemoveCommand
+
+        public ICommand RemoveCommand { get; } //здесь живет сама команда (это по сути обычное свойство, чтобы его можно было вызвать из хамл)
+
+        private void OnRemoveCommandExecuted(object p) //логика команды
+        {
+            Remove(_selectedIndex);
+        }
+
+        private bool CanRemoveCommandExecute(object p) => true; //если команда должна быть доступна всегда, то просто возвращаем true
+
+        #endregion
+
+        #endregion
+
+        public MainWindowViewModel()
+        {
+            #region Commands
+            CloseApplicationCommand = new LambdaCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
+            AddCommand = new LambdaCommand(OnAddCommandExecuted, CanAddCommandExecute);
+            RemoveCommand = new LambdaCommand(OnRemoveCommandExecuted, CanRemoveCommandExecute);
+            #endregion
+        }
 
         public int AddNumber
         {
@@ -60,10 +114,24 @@ namespace MVVM_test2.ViewModels
             }
         }
 
-        public ICommand CommandAdd
+        public int Summa
         {
-            get { return _commandAdd; }
+            get
+            {
+                _summa = _model.SumAll();
+                return _summa;
+            }
         }
+
+        public int SelectedIndex
+        {
+            set
+            {
+                Set(ref _selectedIndex, value);
+            }
+        }
+
+        
 
 
         public ReadOnlyObservableCollection<int> Collections
@@ -74,9 +142,20 @@ namespace MVVM_test2.ViewModels
 
 
 
-        public void Add(int number)
+        private void Add(int number)
         {
             _model.Add(number);
+            OnPropertyChanged("Summa");
+        }
+
+        private void Remove(int index)
+        {
+            if (index != -1)
+            {
+                _model.Remove(index);
+                OnPropertyChanged("Summa");
+            }
+                
         }
 
         

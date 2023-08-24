@@ -24,7 +24,7 @@ namespace MVVM_test2
         }
 
         public void Remove(int index)
-        {
+        { 
             this._numbers.RemoveAt(index);
         }
 

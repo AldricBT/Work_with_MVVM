@@ -17,12 +17,21 @@
             <TextBox Width="50" Height="30" VerticalAlignment="Top" Margin="20,20,0,0"
                      Text="{Binding Path=AddNumber}" />
             <Button Content="Добавить" Width="70" Height="30" VerticalAlignment="Top" 
-                    Margin="20,20,0,0" Command="{Binding Path=Add}"/>
+                    Margin="20,20,0,0" Command="{Binding Path=AddCommand}"/>
         </StackPanel>
-        <TextBox DockPanel.Dock="Bottom" Width="50" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,20,20,20"/>
-        <ListBox Width="100" Margin="20,20,0,0" HorizontalAlignment="Left" 
-                  ItemsSource="{Binding Path=Collections}"
-                  />
+        <TextBox DockPanel.Dock="Bottom" Width="50" Height="30" VerticalAlignment="Bottom"
+                 HorizontalAlignment="Left" Margin="20,20,20,20"
+                 Text="{Binding Path=Summa, Mode=OneWay}" IsReadOnly="True"/>
+        <StackPanel Orientation="Horizontal">
+            <ListBox Name="TheListBox" Width="100" Margin="20,20,0,0" HorizontalAlignment="Left" 
+                ItemsSource="{Binding Path=Collections}" 
+                SelectedIndex="{Binding Path=SelectedIndex, Mode=OneWayToSource}"/>
+            <Button Content="Удалить выбранный" Width="130" Height="30" Margin="20"
+                    Command="{Binding Path=RemoveCommand}"/>
+
+
+        </StackPanel>
+        
         
 
     </DockPanel>
